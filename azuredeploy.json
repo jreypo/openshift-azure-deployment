@@ -1283,7 +1283,7 @@
 				"[concat('Microsoft.Network/networkSecurityGroups/', variables('openshiftEtcdHostname'), '-nsg')]"
 			],
 			"copy": {
-				"name": "masterNicLoop",
+				"name": "etcdNicLoop",
 				"count": "[parameters('masterInstanceCount')]"
 			},
 			"properties": {
@@ -1323,7 +1323,7 @@
 					"properties": {
 						"privateIPAllocationMethod": "Dynamic",
 						"subnet": {
-							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('masterSubnetName'))]"
+							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('infraSubnetName'))]"
 						},
 						"loadBalancerBackendAddressPools": [{
 							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('infraLoadBalancerName'), '/backendAddressPools/loadBalancerBackEnd')]"
@@ -1377,7 +1377,7 @@
 				"[concat('Microsoft.Network/networkSecurityGroups/', variables('openshiftRegistryHostname'), '-nsg')]"
 			],
 			"copy": {
-				"name": "nodeNicLoop",
+				"name": "registryNicLoop",
 				"count": "[parameters('nodeInstanceCount')]"
 			},
 			"properties": {
@@ -1520,7 +1520,7 @@
 			"apiVersion": "[variables('apiVersionLinkTemplate')]",
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountEtcd'))]",
-				"masterNicLoop",
+				"etcdrNicLoop",
 				"etcdavailabilityset"
 			],
 			"copy": {
@@ -1656,8 +1656,8 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountRegistryOs'))]",
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountRegistryData'))]",
-				"infraNicLoop",
-				"infraavailabilityset"
+				"registryNicLoop",
+				"registryavailabilityset"
 			],
 			"copy": {
 				"name": "RegistryVmLoop",
