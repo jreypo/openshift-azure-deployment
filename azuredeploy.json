@@ -1284,7 +1284,7 @@
 			],
 			"copy": {
 				"name": "etcdNicLoop",
-				"count": "[parameters('masterInstanceCount')]"
+				"count": "[parameters('etcdInstanceCount')]"
 			},
 			"properties": {
 				"ipConfigurations": [{
@@ -1434,7 +1434,7 @@
 						"value": "[variables('customImageName')]"
 					},
 					"newStorageAccount": {
-						"value": "[variables('newStorageAccountInfra')]"
+						"value": "[variables('newStorageAccountInfraOs')]"
 					},
 					"customStorageAccount": {
 						"value": "[parameters('customStorageAccount')]"
