@@ -3,7 +3,7 @@
 	"contentVersion": "1.0.0.0",
 	"parameters": {
 		"_artifactsLocation": {
-			"value": "https://raw.githubusercontent.com/jreypo/openshift-azure-deployment/master/"
+			"value": "https://raw.githubusercontent.com/jreypo/openshift-azure-deployment/no-rhsm/"
 		},
 		"customVhdOrGallery": {
 			"value": "gallery"

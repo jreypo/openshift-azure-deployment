@@ -8,7 +8,7 @@
 				"description": "Base URL for Template Files",
 				"artifactsBaseUrl": ""
 			},
-			"defaultValue": "https://raw.githubusercontent.com/jreypo/openshift-azure-deployment/master/"
+			"defaultValue": "https://raw.githubusercontent.com/jreypo/openshift-azure-deployment/no-rhsm/"
 		},
 		"customVhdOrGallery": {
 			"type": "string",
