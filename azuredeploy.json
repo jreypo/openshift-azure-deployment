@@ -255,12 +255,12 @@
 		"openshiftRegistryHostname": "[concat(variables('namingInfix'), '-registry')]",
 		"newStorageAccountMaster": "[concat('master', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountEtcd": "[concat('etcd', uniqueString(concat(resourceGroup().id, 'msa')))]",
-		"newStorageAccountInfraOs": "[concat('infra', uniqueString(concat(resourceGroup().id, 'msa')))]",
-		"newStorageAccountInfraData": "[concat('infra', uniqueString(concat(resourceGroup().id, 'msa')))]",
+		"newStorageAccountInfraOs": "[concat('infraos', uniqueString(concat(resourceGroup().id, 'msa')))]",
+		"newStorageAccountInfraData": "[concat('infradata', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountNodeOs": "[concat('nodeos', uniqueString(concat(resourceGroup().id, 'nodeossa')))]",
 		"newStorageAccountNodeData": "[concat('nodedata', uniqueString(concat(resourceGroup().id, 'nodedatasa')))]",
-		"newStorageAccountRegistryOs": "[concat('registry', uniqueString(concat(resourceGroup().id, 'registry')))]",
-		"newStorageAccountRegistryData": "[concat('registry', uniqueString(concat(resourceGroup().id, 'registry')))]",
+		"newStorageAccountRegistryOs": "[concat('registryos', uniqueString(concat(resourceGroup().id, 'registry')))]",
+		"newStorageAccountRegistryData": "[concat('registrydata', uniqueString(concat(resourceGroup().id, 'registry')))]",
 		"newStorageAccountPersistentVolume1": "[concat('pv1sa', uniqueString(concat(resourceGroup().id, 'persistentvolume1')))]", 
 		"newStorageAccountPersistentVolume2": "[concat('pv2sa', uniqueString(concat(resourceGroup().id, 'persistentvolume2')))]", 
 		"addressPrefix": "192.168.0.0/16",
@@ -848,7 +848,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "InfraStorageAccount"
+				"displayName": "InfraStorageAccountOs"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('infraVmSize')].storageAccountType]"
@@ -859,7 +859,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "InfraStorageAccount"
+				"displayName": "InfraStorageAccountData"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('infraVmSize')].storageAccountType]"
@@ -870,7 +870,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "NodeStorageAccount"
+				"displayName": "NodeStorageAccountOs"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('nodeVmSize')].storageAccountType]"
@@ -881,7 +881,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "NodeStorageAccount"
+				"displayName": "NodeStorageAccountData"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('nodeVmSize')].storageAccountType]"
@@ -892,7 +892,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "RegistryStorageAccount"
+				"displayName": "RegistryStorageAccountOs"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('registryVmSize')].storageAccountType]"
@@ -903,7 +903,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "RegistryStorageAccount"
+				"displayName": "RegistryStorageAccountData"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('registryVmSize')].storageAccountType]"
