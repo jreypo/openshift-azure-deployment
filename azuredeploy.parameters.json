@@ -59,30 +59,6 @@
 		"adminUsername": {
 			"value": "changeme"
 		},
-		"openshiftPassword": {
-			"value": "changeme"
-		},
-		"enableMetrics": {
-			"value": "false"
-		},
-		"enableLogging": {
-			"value": "false"
-		},
-		"enableCockpit": {
-			"value": "false"
-		},
-		"rhsmUsernamePasswordOrActivationKey": {
-			"value": "password"
-		},
-		"rhsmUsernameOrOrgId": {
-			"value": "changeme"
-		},
-		"rhsmPasswordOrActivationKey": {
-			"value": "changeme"
-		},
-		"rhsmPoolId": {
-			"value": "changeme"
-		},
 		"sshPublicKey": {
 			"value": "GEN-SSH-PUB-KEY"
 		},
