@@ -18,7 +18,7 @@
 			"value": "Standard_DS3_v2"
 		},
 		"bastionVmSize": {
-			"value": "Standard_D2_v2"
+			"value": "Standard_DS2_v2"
 		},
 		"etcdVmSize": {
 			"value": "Standard_DS3_v2"
