@@ -303,8 +303,6 @@
 		"singlequote": "'",
 		"customImageName": "[concat(parameters('customStorageAccount'), parameters('customOsDiskName'))]",
 		"sshKeyPath": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-		"bastionPrepScriptUrl": "[concat(parameters('_artifactsLocation'), 'scripts/bastionPrep.sh')]",
-		"bastionPrepScriptFileName": "bastionPrep.sh",
 		"clusterNodeDeploymentTemplateUrl": "[concat(parameters('_artifactsLocation'), 'nested/', parameters('customVhdOrGallery'), 'clusternode.json')]",
 		"basicDeploymentTemplateUrl": "[concat(parameters('_artifactsLocation'), 'nested/', parameters('customVhdOrGallery'), 'basic.json')]",
 		"vmSizesMap": {
@@ -1785,31 +1783,6 @@
 					"apiVersionCompute": {
 						"value": "[variables('apiVersionCompute')]"
 					}
-				}
-			}
-		}, {
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(variables('openshiftBastionHostname'), '/deployOpenShift')]",
-			"location": "[variables('location')]",
-			"apiVersion": "[variables('apiVersionCompute')]",
-			"tags": {
-				"displayName": "PrepBastion"
-			},
-			"dependsOn": [
-				"bastionVmDeployment"
-			],
-			"properties": {
-				"publisher": "Microsoft.Azure.Extensions",
-				"type": "CustomScript",
-				"typeHandlerVersion": "2.0",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"fileUris": [
-						"[variables('bastionPrepScriptUrl')]"
-					]
-				},
-				"protectedSettings": {
-					"commandToExecute": "[concat('bash ', variables('bastionPrepScriptFileName'), ' ', parameters('rhsmUsernamePasswordOrActivationKey'), ' ', parameters('rhsmUsernameOrOrgId'), ' ',variables('singlequote'), parameters('rhsmPasswordOrActivationKey'), variables('singlequote'), ' ', parameters('rhsmPoolId'))]"
 				}
 			}
 		},
