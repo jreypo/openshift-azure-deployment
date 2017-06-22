@@ -1520,7 +1520,7 @@
 			"apiVersion": "[variables('apiVersionLinkTemplate')]",
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountEtcd'))]",
-				"etcdrNicLoop",
+				"etcdNicLoop",
 				"etcdavailabilityset"
 			],
 			"copy": {
