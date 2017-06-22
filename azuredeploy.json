@@ -8,7 +8,7 @@
 				"description": "Base URL for Template Files",
 				"artifactsBaseUrl": ""
 			},
-			"defaultValue": "https://raw.githubusercontent.com/jreypo/openshift-azure-deployment/master/"
+			"defaultValue": "https://raw.githubusercontent.com/jreypo/openshift-azure-deployment/no-rhsm/"
 		},
 		"customVhdOrGallery": {
 			"type": "string",
@@ -46,9 +46,9 @@
 		},
 		"bastionVmSize": {
 			"type": "string",
-			"defaultValue": "Standard_D2_v2",
+			"defaultValue": "Standard_DS2_v2",
 			"allowedValues": [
-				"Standard_D2_v2"
+				"Standard_DS2_v2"
 			],
 			"metadata": {
 				"description": "OpenShift Bastion VM size"
@@ -179,78 +179,6 @@
 				"description": "Administrator username on all VMs and first user created for OpenShift login"
 			}
 		},
-		"openshiftPassword": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Password for OpenShift user to login to OpenShift Console"
-			}
-		},
-		"enableMetrics": {
-			"type": "string",
-			"minLength": 1,
-			"defaultValue": "false",
-			"allowedValues": [
-				"true", "false"
-			],
-			"metadata": {
-				"description": "Enable OpenShift Metrics: true or false"
-			}
-		},
-		"enableLogging": {
-			"type": "string",
-			"minLength": 1,
-			"defaultValue": "false",
-			"allowedValues": [
-				"true", "false"
-			],
-			"metadata": {
-				"description": "Enable OpenShift Logging: true or false"
-			}
-		},
-		"enableCockpit": {
-			"type": "string",
-			"minLength": 1,
-			"defaultValue": "false",
-			"allowedValues": [
-				"true", "false"
-			],
-			"metadata": {
-				"description": "Enable Cockpit: true or false"
-			}
-		},
-		"rhsmUsernamePasswordOrActivationKey": {
-			"type": "string",
-			"minLength": 1,
-			"defaultValue": "usernamepassword",
-			"allowedValues": [
-				"usernamepassword", "activationkey"
-			],
-			"metadata": {
-				"description": "Select whether you want to use your Red Hat Subscription Manager Username and Password or Organization ID and Activation Key to register the RHEL instance to your Red Hat Subscription."
-			}
-		},
-		"rhsmUsernameOrOrgId": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Red Hat Subscription Manager Username or Organization ID. If usernamepassword selected in previous input, then use Username; otherwise entier Organization ID. To find your Organization ID, run on registered server: subscription-manager identity"
-			}
-		},
-		"rhsmPasswordOrActivationKey": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Red Hat Subscription Manager Password or Activation Key. To find or create your Activation Key, go to: https://access.redhat.com/management/activation_keys"
-			}
-		},
-		"rhsmPoolId": {
-			"type": "string",
-			"minLength": 1,
-			"metadata": {
-				"description": "Red Hat Subscription Manager Pool ID with OpenShift entitlements. To find it, run on registered server: subscription-manager list"
-			}
-		},
 		"sshPublicKey": {
 			"type": "securestring",
 			"metadata": {
@@ -326,13 +254,14 @@
 		"openshiftInfraHostname": "[concat(variables('namingInfix'), '-infra')]",
 		"openshiftRegistryHostname": "[concat(variables('namingInfix'), '-registry')]",
 		"newStorageAccountMaster": "[concat('master', uniqueString(concat(resourceGroup().id, 'msa')))]",
+		"newStorageAccountBastion": "[concat('bastion', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountEtcd": "[concat('etcd', uniqueString(concat(resourceGroup().id, 'msa')))]",
-		"newStorageAccountInfraOs": "[concat('infra', uniqueString(concat(resourceGroup().id, 'msa')))]",
-		"newStorageAccountInfraData": "[concat('infra', uniqueString(concat(resourceGroup().id, 'msa')))]",
+		"newStorageAccountInfraOs": "[concat('infraos', uniqueString(concat(resourceGroup().id, 'msa')))]",
+		"newStorageAccountInfraData": "[concat('infradata', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountNodeOs": "[concat('nodeos', uniqueString(concat(resourceGroup().id, 'nodeossa')))]",
 		"newStorageAccountNodeData": "[concat('nodedata', uniqueString(concat(resourceGroup().id, 'nodedatasa')))]",
-		"newStorageAccountRegistryOs": "[concat('registry', uniqueString(concat(resourceGroup().id, 'registry')))]",
-		"newStorageAccountRegistryData": "[concat('registry', uniqueString(concat(resourceGroup().id, 'registry')))]",
+		"newStorageAccountRegistryOs": "[concat('regos', uniqueString(concat(resourceGroup().id, 'registry')))]",
+		"newStorageAccountRegistryData": "[concat('regdata', uniqueString(concat(resourceGroup().id, 'registry')))]",
 		"newStorageAccountPersistentVolume1": "[concat('pv1sa', uniqueString(concat(resourceGroup().id, 'persistentvolume1')))]", 
 		"newStorageAccountPersistentVolume2": "[concat('pv2sa', uniqueString(concat(resourceGroup().id, 'persistentvolume2')))]", 
 		"addressPrefix": "192.168.0.0/16",
@@ -375,8 +304,6 @@
 		"singlequote": "'",
 		"customImageName": "[concat(parameters('customStorageAccount'), parameters('customOsDiskName'))]",
 		"sshKeyPath": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-		"bastionPrepScriptUrl": "[concat(parameters('_artifactsLocation'), 'scripts/bastionPrep.sh')]",
-		"bastionPrepScriptFileName": "bastionPrep.sh",
 		"clusterNodeDeploymentTemplateUrl": "[concat(parameters('_artifactsLocation'), 'nested/', parameters('customVhdOrGallery'), 'clusternode.json')]",
 		"basicDeploymentTemplateUrl": "[concat(parameters('_artifactsLocation'), 'nested/', parameters('customVhdOrGallery'), 'basic.json')]",
 		"vmSizesMap": {
@@ -907,6 +834,17 @@
 			}
 		}, {
 			"type": "Microsoft.Storage/storageAccounts",
+			"name": "[variables('newStorageAccountBastion')]",
+			"location": "[variables('location')]",
+			"apiVersion": "[variables('apiVersionStorage')]",
+			"tags": {
+				"displayName": "BastionStorageAccount"
+			},
+			"properties": {
+				"accountType": "[variables('vmSizesMap')[parameters('bastionVmSize')].storageAccountType]"
+			}
+		}, {
+			"type": "Microsoft.Storage/storageAccounts",
 			"name": "[variables('newStorageAccountEtcd')]",
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
@@ -922,7 +860,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "InfraStorageAccount"
+				"displayName": "InfraStorageAccountOs"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('infraVmSize')].storageAccountType]"
@@ -933,7 +871,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "InfraStorageAccount"
+				"displayName": "InfraStorageAccountData"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('infraVmSize')].storageAccountType]"
@@ -944,7 +882,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "NodeStorageAccount"
+				"displayName": "NodeStorageAccountOs"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('nodeVmSize')].storageAccountType]"
@@ -955,7 +893,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "NodeStorageAccount"
+				"displayName": "NodeStorageAccountData"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('nodeVmSize')].storageAccountType]"
@@ -966,7 +904,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "RegistryStorageAccount"
+				"displayName": "RegistryStorageAccountOs"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('registryVmSize')].storageAccountType]"
@@ -977,7 +915,7 @@
 			"location": "[variables('location')]",
 			"apiVersion": "[variables('apiVersionStorage')]",
 			"tags": {
-				"displayName": "RegistryStorageAccount"
+				"displayName": "RegistryStorageAccountData"
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('registryVmSize')].storageAccountType]"
@@ -1357,8 +1295,8 @@
 				"[concat('Microsoft.Network/networkSecurityGroups/', variables('openshiftEtcdHostname'), '-nsg')]"
 			],
 			"copy": {
-				"name": "masterNicLoop",
-				"count": "[parameters('masterInstanceCount')]"
+				"name": "etcdNicLoop",
+				"count": "[parameters('etcdInstanceCount')]"
 			},
 			"properties": {
 				"ipConfigurations": [{
@@ -1397,7 +1335,7 @@
 					"properties": {
 						"privateIPAllocationMethod": "Dynamic",
 						"subnet": {
-							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('masterSubnetName'))]"
+							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('infraSubnetName'))]"
 						},
 						"loadBalancerBackendAddressPools": [{
 							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('infraLoadBalancerName'), '/backendAddressPools/loadBalancerBackEnd')]"
@@ -1451,7 +1389,7 @@
 				"[concat('Microsoft.Network/networkSecurityGroups/', variables('openshiftRegistryHostname'), '-nsg')]"
 			],
 			"copy": {
-				"name": "nodeNicLoop",
+				"name": "registryNicLoop",
 				"count": "[parameters('nodeInstanceCount')]"
 			},
 			"properties": {
@@ -1508,7 +1446,7 @@
 						"value": "[variables('customImageName')]"
 					},
 					"newStorageAccount": {
-						"value": "[variables('newStorageAccountInfra')]"
+						"value": "[variables('newStorageAccountInfraOs')]"
 					},
 					"customStorageAccount": {
 						"value": "[parameters('customStorageAccount')]"
@@ -1594,7 +1532,7 @@
 			"apiVersion": "[variables('apiVersionLinkTemplate')]",
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountEtcd'))]",
-				"masterNicLoop",
+				"etcdNicLoop",
 				"etcdavailabilityset"
 			],
 			"copy": {
@@ -1730,8 +1668,8 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountRegistryOs'))]",
 				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountRegistryData'))]",
-				"infraNicLoop",
-				"infraavailabilityset"
+				"registryNicLoop",
+				"registryavailabilityset"
 			],
 			"copy": {
 				"name": "RegistryVmLoop",
@@ -1857,31 +1795,6 @@
 					"apiVersionCompute": {
 						"value": "[variables('apiVersionCompute')]"
 					}
-				}
-			}
-		}, {
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(variables('openshiftBastionHostname'), '/deployOpenShift')]",
-			"location": "[variables('location')]",
-			"apiVersion": "[variables('apiVersionCompute')]",
-			"tags": {
-				"displayName": "PrepBastion"
-			},
-			"dependsOn": [
-				"bastionVmDeployment"
-			],
-			"properties": {
-				"publisher": "Microsoft.Azure.Extensions",
-				"type": "CustomScript",
-				"typeHandlerVersion": "2.0",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"fileUris": [
-						"[variables('bastionPrepScriptUrl')]"
-					]
-				},
-				"protectedSettings": {
-					"commandToExecute": "[concat('bash ', variables('bastionPrepScriptFileName'), ' ', parameters('rhsmUsernamePasswordOrActivationKey'), ' ', parameters('rhsmUsernameOrOrgId'), ' ',variables('singlequote'), parameters('rhsmPasswordOrActivationKey'), variables('singlequote'), ' ', parameters('rhsmPoolId'))]"
 				}
 			}
 		},
