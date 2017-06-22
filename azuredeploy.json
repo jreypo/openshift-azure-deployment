@@ -254,6 +254,7 @@
 		"openshiftInfraHostname": "[concat(variables('namingInfix'), '-infra')]",
 		"openshiftRegistryHostname": "[concat(variables('namingInfix'), '-registry')]",
 		"newStorageAccountMaster": "[concat('master', uniqueString(concat(resourceGroup().id, 'msa')))]",
+		"newStorageAccountBastion": "[concat('bastion', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountEtcd": "[concat('etcd', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountInfraOs": "[concat('infraos', uniqueString(concat(resourceGroup().id, 'msa')))]",
 		"newStorageAccountInfraData": "[concat('infradata', uniqueString(concat(resourceGroup().id, 'msa')))]",
@@ -830,6 +831,17 @@
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('masterVmSize')].storageAccountType]"
+			}
+		}, {
+			"type": "Microsoft.Storage/storageAccounts",
+			"name": "[variables('newStorageAccountBastion')]",
+			"location": "[variables('location')]",
+			"apiVersion": "[variables('apiVersionStorage')]",
+			"tags": {
+				"displayName": "BastionStorageAccount"
+			},
+			"properties": {
+				"accountType": "[variables('vmSizesMap')[parameters('bastionVmSize')].storageAccountType]"
 			}
 		}, {
 			"type": "Microsoft.Storage/storageAccounts",
